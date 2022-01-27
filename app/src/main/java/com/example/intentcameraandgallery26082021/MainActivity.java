@@ -116,9 +116,10 @@ public class MainActivity extends AppCompatActivity {
                         );
                     }
                 } else {
-//                    Intent intent = new Intent();
-//                    intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-//                    cameraLauncher.launch(intent);
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_PICK);
+                    intent.setType("image/*");
+                    galleryLauncher.launch(intent);
                 }
             }
         });
@@ -135,9 +136,10 @@ public class MainActivity extends AppCompatActivity {
         }
         if (requestCode == REQUEST_CODE_GALLERY) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                Intent intent = new Intent();
-//                intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-//                cameraLauncher.launch(intent);
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                galleryLauncher.launch(intent);
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -148,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
-                    if(result.getResultCode() == RESULT_OK){
+                    if (result.getResultCode() == RESULT_OK) {
                         Bitmap bitmap = (Bitmap) result.getData().getExtras().get("data");
                         mImg.setImageBitmap(bitmap);
                     }
@@ -156,5 +158,16 @@ public class MainActivity extends AppCompatActivity {
             }
     );
 
-
+    private ActivityResultLauncher<Intent> galleryLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Uri uri = result.getData().getData();
+                        mImg.setImageURI(uri);
+                    }
+                }
+            }
+    );
 }
